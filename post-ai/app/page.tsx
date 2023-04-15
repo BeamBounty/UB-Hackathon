@@ -38,7 +38,6 @@ export default function Home() {
 			}),
 		})
 		const gpt_post: GPT = await req.json()
-		console.log(gpt_post.prompt)
 		setPost(gpt_post.text)
 	}
 
