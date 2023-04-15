@@ -15,6 +15,7 @@ export default function Home() {
 	const toneRef = useRef<HTMLSelectElement>(null)
 	const demoRef = useRef<HTMLSelectElement>(null)
 	const [post, setPost] = useState("")
+	const [loading, setLoading] = useState(false)
 
 	type GPT = {
 		text: string
@@ -27,6 +28,8 @@ export default function Home() {
 	}
 
 	const generatePost = async () => {
+		setLoading(true)
+		setPost(" ")
 		const req = await fetch("/api/openai", {
 			method: "POST",
 			body: JSON.stringify({
@@ -39,6 +42,7 @@ export default function Home() {
 		})
 		const gpt_post: GPT = await req.json()
 		setPost(gpt_post.text)
+		setLoading(false)
 	}
 
 	const sendPost = async () => {
@@ -94,7 +98,9 @@ export default function Home() {
 								ref={toneRef}
 								className='pr-4 ml-2 text-black rounded-md'
 							>
-								<option>Funny</option>
+								<option>Aggressive</option>
+								<option>Controversial</option>
+								<option>Conspiratorial</option>
 								<option>Informative</option>
 								<option>Motivational</option>
 								<option>Sarcastic</option>
@@ -132,11 +138,17 @@ export default function Home() {
 						<SiOpenai className='mx-2 my-1' />
 					</div>
 				</div>
-				<div className='bg-white text-black rounded-md  w-[70%] p-4 my-4'>
+				<div
+					className={
+						"bg-white text-black rounded-md  w-[70%] p-4 my-4" +
+						(loading ? "bg-gray-200 animate-pulse my-4" : "")
+					}
+				>
 					<textarea
 						placeholder='Enter Post'
 						className='w-full'
 						value={post}
+						disabled={loading}
 						onChange={event => {
 							setPost(event.target.value)
 						}}
