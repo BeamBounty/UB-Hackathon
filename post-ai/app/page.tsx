@@ -54,8 +54,6 @@ export default function Home() {
 		})
 
 		const twitter_res: Twitter = await req.json()
-		console.log(twitter_res.tweet)
-		setPost(twitter_res.text)
 	}
 
 	return (

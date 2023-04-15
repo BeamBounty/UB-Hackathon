@@ -26,10 +26,10 @@ export async function POST(request: Request) {
 	})
 
 	//upload the post to make the tweet
-	await twitterClient.v1.tweet(req.post);
+	const res = await twitterClient.v2.tweet(req.post);
 
+	console.log(res);
 	return NextResponse.json({
-		// text: "Will post tweet",
-		tweet: req.post,
-	})
+		text: "successful",
+	});
 }
