@@ -1,5 +1,5 @@
 "use client"
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { SiOpenai } from "react-icons/si"
 import { CiImageOn, CiCircleList } from "react-icons/ci"
 import { MdOutlineGifBox } from "react-icons/md"
@@ -7,6 +7,7 @@ import { BsEmojiSmile } from "react-icons/bs"
 import { TbCalendarTime } from "react-icons/tb"
 import { HiOutlineLocationMarker } from "react-icons/hi"
 import { AiOutlineSend } from "react-icons/ai"
+import {BiLeftArrow, BiRightArrow} from "react-icons/bi"
 
 export default function Home() {
 	const nameRef = useRef<HTMLInputElement>(null)
@@ -14,8 +15,9 @@ export default function Home() {
 	const contextRef = useRef<HTMLTextAreaElement>(null)
 	const toneRef = useRef<HTMLSelectElement>(null)
 	const demoRef = useRef<HTMLSelectElement>(null)
-	const [post, setPost] = useState("")
+	const [post, setPost] = useState<string[]>([])
 	const [loading, setLoading] = useState(false)
+	const [index, setIndex] = useState(0)
 
 	type GPT = {
 		text: string
@@ -27,9 +29,11 @@ export default function Home() {
 		tweet: string
 	}
 
+		
+	useEffect(()=>{setIndex(post.length-1)},[post])
+	
 	const generatePost = async () => {
 		setLoading(true)
-		setPost(" ")
 		const req = await fetch("/api/openai", {
 			method: "POST",
 			body: JSON.stringify({
@@ -41,7 +45,7 @@ export default function Home() {
 			}),
 		})
 		const gpt_post: GPT = await req.json()
-		setPost(gpt_post.text)
+		setPost(previous=>[...previous,gpt_post.text])
 		setLoading(false)
 	}
 
@@ -145,15 +149,21 @@ export default function Home() {
 					<textarea
 						placeholder='Enter Post'
 						className='w-full'
-						value={post}
+						value={post[index]}
 						disabled={loading}
 						onChange={event => {
-							setPost(event.target.value)
+							setPost(previous=>[...previous,event.target.value])
 						}}
 					/>
 				</div>
 				<div className='flex w-[70%] justify-between'>
 					<ul className='flex gap-8 mx-2 text-2xl'>
+						<li>
+							<BiLeftArrow onClick={()=>setIndex(PreviousIndex=>PreviousIndex == 0 ? 0 : PreviousIndex - 1)}/>
+						</li>
+						<li>
+							<BiRightArrow onClick={()=>setIndex(PreviousIndex=>PreviousIndex == post.length-1 ? PreviousIndex : PreviousIndex + 1)}/>
+						</li>
 						<li>
 							<CiImageOn />
 						</li>
