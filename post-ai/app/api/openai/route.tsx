@@ -6,12 +6,14 @@ type GPTData = {
 	name: string
 	bio: string
 	context: string
+	tone: string
+	target_demo: string
 }
 
 export async function POST(request: Request) {
 	const req: GPTData = await request.json()
 
-	const prompt = `Company Name: ${req.name}\nCompany Description: ${req.bio}\nGenerate a tweet for this company with the following context:\n${req.context}`
+	const prompt = `Company Name: ${req.name}\nCompany Description: ${req.bio}\nGenerate a ${req.tone} tweet geared towards ${req.target_demo} for this company with the following context:\n${req.context}`
 	// use the openai api to prompt chatgpt for a tweet.
 	// feel free to modify the promp if you want.
 

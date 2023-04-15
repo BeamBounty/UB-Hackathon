@@ -12,6 +12,8 @@ export default function Home() {
 	const nameRef = useRef<HTMLInputElement>(null)
 	const bioRef = useRef<HTMLTextAreaElement>(null)
 	const contextRef = useRef<HTMLTextAreaElement>(null)
+	const toneRef = useRef<HTMLSelectElement>(null)
+	const demoRef = useRef<HTMLSelectElement>(null)
 	const [post, setPost] = useState("")
 
 	type GPT = {
@@ -31,6 +33,8 @@ export default function Home() {
 				name: nameRef.current?.value,
 				bio: bioRef.current?.value,
 				context: contextRef?.current?.value,
+				tone: toneRef?.current?.value,
+				target_demo: demoRef?.current?.value,
 			}),
 		})
 		const gpt_post: GPT = await req.json()
@@ -52,8 +56,8 @@ export default function Home() {
 	}
 
 	return (
-		<main className='flex min-h-screen flex-col items-center justify-between p-24'>
-			<div className='z-10 w-full max-w-5xl mx-10 items-center justify-between font-mono text-lg grid grid-cols-1'>
+		<main className='flex flex-col items-center justify-between min-h-screen p-24'>
+			<div className='z-10 grid items-center justify-between w-full max-w-5xl grid-cols-1 mx-10 font-mono text-lg'>
 				<div className='uppercase'>Name</div>
 				<div className='bg-white text-black rounded-md w-[70%] p-4 my-4'>
 					<input
@@ -74,19 +78,56 @@ export default function Home() {
 				</div>
 
 				<div className='uppercase'>Context</div>
-				<div className='bg-white text-black rounded-md  w-[70%] p-4 my-4'>
-					<textarea
-						ref={contextRef}
-						placeholder='Enter Post Context'
-						className='w-full'
-					/>
+				<div className='rounded-md ring-1 ring-white w-[70%] p-4 my-4'>
+					<div className='w-full p-4 mb-4 text-black bg-white rounded-md'>
+						<textarea
+							ref={contextRef}
+							placeholder='Enter Post Context'
+							className='w-full'
+						/>
+					</div>
+
+					<div className='flex justify-between w-full'>
+						<div>
+							Tone:
+							<select
+								name='tone'
+								ref={toneRef}
+								className='pr-4 ml-2 text-black rounded-md'
+							>
+								<option>Funny</option>
+								<option>Informative</option>
+								<option>Motivational</option>
+								<option>Sarcastic</option>
+								<option>Serious</option>
+								<option>Silly</option>
+							</select>
+						</div>
+						<div>
+							Target Demographic:
+							<select
+								name='target-demo'
+								ref={demoRef}
+								className='pr-4 ml-2 text-black rounded-md'
+							>
+								<option>Adults</option>
+								<option>Athletes</option>
+								<option>College Students</option>
+								<option>Gamers</option>
+								<option>High School</option>
+								<option>Men</option>
+								<option>Parents</option>
+								<option>Women</option>
+							</select>
+						</div>
+					</div>
 				</div>
 
 				<div className='flex w-[70%] justify-between'>
 					<div className='uppercase'>Post</div>
 					<div
 						onClick={generatePost}
-						className='flex rounded-md justify-end hover:cursor-pointer hover:bg-white hover:text-black ring-1 ring-white pl-2'
+						className='flex justify-end pl-2 rounded-md hover:cursor-pointer hover:bg-white hover:text-black ring-1 ring-white'
 					>
 						ChatGPT
 						<SiOpenai className='mx-2 my-1' />
@@ -125,7 +166,7 @@ export default function Home() {
 					</ul>
 					<div
 						onClick={sendPost}
-						className='flex rounded-md justify-end hover:cursor-pointer hover:bg-white hover:text-black ring-1 ring-white pl-2'
+						className='flex justify-end pl-2 rounded-md hover:cursor-pointer hover:bg-white hover:text-black ring-1 ring-white'
 					>
 						Tweet
 						<AiOutlineSend className='mx-2 my-1' />
