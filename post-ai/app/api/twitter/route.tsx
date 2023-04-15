@@ -1,8 +1,5 @@
-import { NextResponse } from "next/server";
-import { TwitterApi } from "twitter-api-v2";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import { NextResponse } from "next/server"
+import { TwitterApi } from "twitter-api-v2"
 
 // process.env.TWITTER_KEY
 // process.env.TWITTER_SECRET
@@ -22,14 +19,13 @@ export async function POST(request: Request) {
 		appSecret: process.env.TWITTER_SECRET!,
 		accessToken: process.env.ACCESS_TOKEN!,
 		accessSecret: process.env.ACCESS_SECRET!,
-
 	})
 
 	//upload the post to make the tweet
-	const res = await twitterClient.v2.tweet(req.post);
+	const res = await twitterClient.v2.tweet(req.post)
 
-	console.log(res);
+	console.log(res)
 	return NextResponse.json({
 		text: "successful",
-	});
+	})
 }
