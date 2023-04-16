@@ -83,9 +83,10 @@ export default function Home() {
 
 	return (
 		<main className='flex flex-col items-center justify-between min-h-screen p-24'>
-			<div className='z-10 grid items-center justify-between w-full max-w-5xl grid-cols-1 mx-10 font-mono text-lg'>
+			<div className='z-10 grid items-center justify-between w-full md:max-w-[35%] md:min-w-max grid-cols-1 mx-10 font-mono text-lg'>
+				<h1 className='pb-4 text-4xl text-center'>PostAI</h1>
 				<div className='uppercase'>Name</div>
-				<div className='bg-white text-black rounded-md w-[70%] p-4 my-4'>
+				<div className='w-full p-4 my-4 text-black bg-white rounded-md'>
 					<input
 						type='text'
 						ref={nameRef}
@@ -95,7 +96,7 @@ export default function Home() {
 				</div>
 
 				<div className='uppercase'>Bio</div>
-				<div className='bg-white text-black rounded-md  w-[70%] p-4 my-4'>
+				<div className='w-full p-4 my-4 text-black bg-white rounded-md'>
 					<textarea
 						ref={bioRef}
 						placeholder='Enter Company Bio'
@@ -107,7 +108,7 @@ export default function Home() {
 				</div>
 
 				<div className='uppercase'>Context</div>
-				<div className='rounded-md ring-1 ring-white w-[70%] p-4 my-4'>
+				<div className='w-full p-4 my-4 rounded-md ring-1 ring-white'>
 					<div className='w-full p-4 mb-4 text-black bg-white rounded-md'>
 						<textarea
 							ref={contextRef}
@@ -163,7 +164,7 @@ export default function Home() {
 					</div>
 				</div>
 
-				<div className='flex w-[70%] justify-between'>
+				<div className='flex justify-between w-full'>
 					<div className='uppercase'>Post</div>
 					<div className={post.length == 0 ? "hidden" : ""}>
 						{index + 1} of {post.length}
@@ -178,7 +179,7 @@ export default function Home() {
 				</div>
 				<div
 					className={
-						"bg-white text-black rounded-md  w-[70%] p-4 my-4" +
+						"bg-white text-black rounded-md  w-full p-4 my-4" +
 						(loading ? "bg-gray-200 animate-pulse my-4" : "")
 					}
 				>
@@ -194,7 +195,7 @@ export default function Home() {
 						style={{ height: postSize }}
 					/>
 				</div>
-				<div className='flex w-[70%] justify-between'>
+				<div className='flex justify-between w-full'>
 					<ul className='flex gap-8 mx-2 text-2xl select-none'>
 						<li>
 							<BiLeftArrow
