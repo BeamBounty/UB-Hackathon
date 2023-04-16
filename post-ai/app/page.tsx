@@ -8,6 +8,8 @@ import { TbCalendarTime } from "react-icons/tb"
 import { HiOutlineLocationMarker } from "react-icons/hi"
 import { AiOutlineSend } from "react-icons/ai"
 import { BiLeftArrow, BiRightArrow } from "react-icons/bi"
+import { RxTwitterLogo } from "react-icons/rx"
+import Link from "next/link"
 
 export default function Home() {
 	const nameRef = useRef<HTMLInputElement>(null)
@@ -20,12 +22,20 @@ export default function Home() {
 	const [currPost, setCurrPost] = useState("")
 	const [loading, setLoading] = useState(false)
 	const [index, setIndex] = useState(0)
-
 	const [postSize, setPostSize] = useState("75px")
+	const [tweet, setTweet] = useState("")
 
 	type GPT = {
 		text: string
 		prompt: string
+	}
+
+	type TwitterResponse = {
+		data: {
+			edit_history_tweet_ids: string[]
+			id: string
+			text: string
+		}
 	}
 
 	useEffect(() => {
@@ -75,9 +85,15 @@ export default function Home() {
 		const req = await fetch("/api/twitter", {
 			method: "POST",
 			body: JSON.stringify({
-				post: post,
+				post: currPost,
 			}),
 		})
+
+		const baseUrl = "https://twitter.com/BeamBounty/status/"
+		const twitterRes: TwitterResponse = await req.json()
+		const id = twitterRes.data.id
+		setTweet(`${baseUrl}${id}`)
+
 		setLoading(false)
 	}
 
@@ -133,6 +149,7 @@ export default function Home() {
 								<option>Controversial</option>
 								<option>Conspiratorial</option>
 								<option>Emotional</option>
+								<option>Fun</option>
 								<option>Informative</option>
 								<option>Motivational</option>
 								<option>Sarcastic</option>
@@ -179,7 +196,7 @@ export default function Home() {
 				</div>
 				<div
 					className={
-						"bg-white text-black rounded-md  w-full p-4 my-4" +
+						"bg-white text-black rounded-md  w-full p-4 my-4 " +
 						(loading ? "bg-gray-200 animate-pulse my-4" : "")
 					}
 				>
@@ -240,12 +257,29 @@ export default function Home() {
 							<HiOutlineLocationMarker />
 						</li>
 					</ul>
-					<div
-						onClick={sendPost}
-						className='flex justify-end pl-2 rounded-md hover:cursor-pointer hover:bg-white hover:text-black ring-1 ring-white'
-					>
-						Tweet
-						<AiOutlineSend className='mx-2 my-1' />
+					<div className='flex gap-4'>
+						<Link
+							target='_blank'
+							rel='noopener noreferrer'
+							href={tweet}
+						>
+							<div
+								className={
+									"flex justify-end pl-3 rounded-md hover:cursor-pointer hover:bg-white hover:text-black ring-1 ring-white " +
+									(tweet ? "" : "hidden")
+								}
+							>
+								View Post
+								<AiOutlineSend className='mx-2 my-1' />
+							</div>
+						</Link>
+						<div
+							onClick={sendPost}
+							className='flex justify-end pl-2 rounded-md hover:cursor-pointer hover:bg-white hover:text-black ring-1 ring-white'
+						>
+							Tweet
+							<RxTwitterLogo className='mx-2 my-1.5' />
+						</div>
 					</div>
 				</div>
 			</div>
