@@ -7,31 +7,52 @@ import { BsEmojiSmile } from "react-icons/bs"
 import { TbCalendarTime } from "react-icons/tb"
 import { HiOutlineLocationMarker } from "react-icons/hi"
 import { AiOutlineSend } from "react-icons/ai"
-import {BiLeftArrow, BiRightArrow} from "react-icons/bi"
+import { BiLeftArrow, BiRightArrow } from "react-icons/bi"
 
 export default function Home() {
 	const nameRef = useRef<HTMLInputElement>(null)
 	const bioRef = useRef<HTMLTextAreaElement>(null)
 	const contextRef = useRef<HTMLTextAreaElement>(null)
+	const postRef = useRef<HTMLTextAreaElement>(null)
 	const toneRef = useRef<HTMLSelectElement>(null)
 	const demoRef = useRef<HTMLSelectElement>(null)
 	const [post, setPost] = useState<string[]>([])
+	const [currPost, setCurrPost] = useState("")
 	const [loading, setLoading] = useState(false)
 	const [index, setIndex] = useState(0)
+
+	const [postSize, setPostSize] = useState("75px")
 
 	type GPT = {
 		text: string
 		prompt: string
 	}
 
-	type Twitter = {
-		text: string
-		tweet: string
-	}
+	useEffect(() => {
+		setIndex(post.length - 1)
+	}, [post.length])
 
-		
-	useEffect(()=>{setIndex(post.length-1)},[post])
-	
+	useEffect(() => {
+		setCurrPost(post[index])
+	}, [index])
+
+	useEffect(() => {
+		post.length == 0 && currPost
+			? setPost([currPost])
+			: setPost(previous =>
+					previous.map((p, idx) => {
+						if (idx == index) {
+							return currPost
+						}
+						return p
+					})
+			  )
+	}, [currPost])
+
+	useEffect(() => {
+		setPostSize(() => `${postRef.current?.scrollHeight}px`)
+	}, [postRef.current?.value])
+
 	const generatePost = async () => {
 		setLoading(true)
 		const req = await fetch("/api/openai", {
@@ -45,19 +66,19 @@ export default function Home() {
 			}),
 		})
 		const gpt_post: GPT = await req.json()
-		setPost(previous=>[...previous,gpt_post.text])
+		setPost(previous => [...previous, gpt_post.text])
 		setLoading(false)
 	}
 
 	const sendPost = async () => {
+		setLoading(true)
 		const req = await fetch("/api/twitter", {
 			method: "POST",
 			body: JSON.stringify({
 				post: post,
 			}),
 		})
-
-		const twitter_res: Twitter = await req.json()
+		setLoading(false)
 	}
 
 	return (
@@ -79,6 +100,9 @@ export default function Home() {
 						ref={bioRef}
 						placeholder='Enter Company Bio'
 						className='w-full'
+						onChange={event => {
+							event.target.style.height = `${event.target.scrollHeight}px`
+						}}
 					/>
 				</div>
 
@@ -89,6 +113,9 @@ export default function Home() {
 							ref={contextRef}
 							placeholder='Enter Post Context'
 							className='w-full'
+							onChange={event => {
+								event.target.style.height = `${event.target.scrollHeight}px`
+							}}
 						/>
 					</div>
 
@@ -101,13 +128,16 @@ export default function Home() {
 								className='pr-4 ml-2 text-black rounded-md'
 							>
 								<option>Aggressive</option>
+								<option>Apologetic</option>
 								<option>Controversial</option>
 								<option>Conspiratorial</option>
+								<option>Emotional</option>
 								<option>Informative</option>
 								<option>Motivational</option>
 								<option>Sarcastic</option>
 								<option>Serious</option>
 								<option>Silly</option>
+								<option>Skeptical</option>
 							</select>
 						</div>
 						<div>
@@ -120,8 +150,11 @@ export default function Home() {
 								<option>Adults</option>
 								<option>Athletes</option>
 								<option>College Students</option>
+								<option>Everyone</option>
+								<option>Fitness</option>
 								<option>Gamers</option>
 								<option>High School</option>
+								<option>LGBTQ</option>
 								<option>Men</option>
 								<option>Parents</option>
 								<option>Women</option>
@@ -132,6 +165,9 @@ export default function Home() {
 
 				<div className='flex w-[70%] justify-between'>
 					<div className='uppercase'>Post</div>
+					<div className={post.length == 0 ? "hidden" : ""}>
+						{index + 1} of {post.length}
+					</div>
 					<div
 						onClick={generatePost}
 						className='flex justify-end pl-2 rounded-md hover:cursor-pointer hover:bg-white hover:text-black ring-1 ring-white'
@@ -149,20 +185,40 @@ export default function Home() {
 					<textarea
 						placeholder='Enter Post'
 						className='w-full'
-						value={post[index]}
+						value={loading ? " " : currPost}
 						disabled={loading}
+						ref={postRef}
 						onChange={event => {
-							setPost(previous=>[...previous,event.target.value])
+							setCurrPost(event.target.value)
 						}}
+						style={{ height: postSize }}
 					/>
 				</div>
 				<div className='flex w-[70%] justify-between'>
-					<ul className='flex gap-8 mx-2 text-2xl'>
+					<ul className='flex gap-8 mx-2 text-2xl select-none'>
 						<li>
-							<BiLeftArrow onClick={()=>setIndex(PreviousIndex=>PreviousIndex == 0 ? 0 : PreviousIndex - 1)}/>
+							<BiLeftArrow
+								className='cursor-pointer'
+								onClick={() =>
+									setIndex(PreviousIndex =>
+										PreviousIndex == 0
+											? 0
+											: PreviousIndex - 1
+									)
+								}
+							/>
 						</li>
 						<li>
-							<BiRightArrow onClick={()=>setIndex(PreviousIndex=>PreviousIndex == post.length-1 ? PreviousIndex : PreviousIndex + 1)}/>
+							<BiRightArrow
+								className='cursor-pointer'
+								onClick={() =>
+									setIndex(PreviousIndex =>
+										PreviousIndex == post.length - 1
+											? PreviousIndex
+											: PreviousIndex + 1
+									)
+								}
+							/>
 						</li>
 						<li>
 							<CiImageOn />
